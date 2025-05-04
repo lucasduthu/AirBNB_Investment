@@ -1,0 +1,406 @@
+### CODE BOOK 
+
+#Name                           type                          meaning
+
+#realSum                        NumÃ©rique                    Le prix total de lâ€™annonce (ce que lâ€™utilisateur paie).
+#room_type                      CatÃ©gorielle                 Le type de chambre proposÃ© : par exemple entiÃ¨re, privÃ©e, partagÃ©e.
+#room_shared                    BoolÃ©en (TRUE/FALSE)         Est-ce que la chambre est partagÃ©e avec dâ€™autres personnes ? (TRUE = oui, FALSE = non).
+#room_private                   BoolÃ©en (TRUE/FALSE)         Est-ce que la chambre est privative (rÃ©servÃ©e uniquement Ã  toi) ? (TRUE = oui, FALSE = non).
+#person_capacity                NumÃ©rique                    Nombre maximum de personnes pouvant Ãªtre hÃ©bergÃ©es dans le logement.
+#host_is_superhost              BoolÃ©en (TRUE/FALSE)         Est-ce que lâ€™hÃ´te est un superhost (trÃ¨s bien notÃ© par Airbnb) ?
+#multi                          BoolÃ©en (TRUE/FALSE)         Est-ce que lâ€™annonce propose plusieurs chambres en mÃªme temps ?
+#biz                            BoolÃ©en (TRUE/FALSE)         Est-ce que lâ€™annonce est destinÃ©e Ã  un usage professionnel (par ex. voyage dâ€™affaires) ?
+#cleanliness_rating             NumÃ©rique                    Note de propretÃ© du logement (gÃ©nÃ©ralement sur 10).
+#guest_satisfaction_overall     NumÃ©rique                    Note globale donnÃ©e par les invitÃ©s aprÃ¨s leur sÃ©jour.
+#bedrooms                       NumÃ©rique                    Nombre de chambres dans lâ€™annonce.
+#dist                           NumÃ©rique                    Distance au centre-ville (en kilomÃ¨tres ou autre unitÃ©).
+#metro_dist                     NumÃ©rique                    Distance Ã  la station de mÃ©tro la plus proche.
+#lng                            NumÃ©rique                    Longitude de lâ€™emplacement du logement (coordonnÃ©e gÃ©ographique Est-Ouest).
+#lat                            NumÃ©rique                    Latitude de lâ€™emplacement du logement (coordonnÃ©e gÃ©ographique Nord-Sud).
+
+
+
+install.packages("showtext")
+library(showtext)
+install.packages("sysfonts")
+library(sysfonts)
+font_add(family = "LMRoman", regular = "/Users/lucasduthu-paloumet/Downloads/Latin-Modern-Roman/lmroman10-regular.otf", bold = "/Users/lucasduthu-paloumet/Downloads/Latin-Modern-Roman/lmroman10-bold.otf", italic = "/Users/lucasduthu-paloumet/Downloads/Latin-Modern-Roman/lmroman10-italic.otf", bolditalic = "/Users/lucasduthu-paloumet/Downloads/Latin-Modern-Roman/lmroman10-bolditalic.otf")
+showtext_auto()
+font_families()
+
+fonts()
+### BRANDCOLOR : GRADIENTS & PALETTES 
+
+Rausch <- colorRampPalette(c("#FF5A5F", "white"))(11)
+scales::show_col(Rausch)
+
+Babu <- colorRampPalette(c("#00D1C1", "white"))(11)
+scales::show_col(Babu)
+
+Arches <- colorRampPalette(c("#FC642D", "white"))(11)
+scales::show_col(Arches)
+
+Lima <- colorRampPalette(c("#8CE071", "white"))(11)
+scales::show_col(Lima)
+
+Hackberry <- colorRampPalette(c("#7B0051", "white"))(11)
+scales::show_col(Hackberry)
+
+Beach <- colorRampPalette(c("#FFB400", "white"))(11)
+scales::show_col(Beach)
+
+Tirol <- colorRampPalette(c("#B4A76C", "white"))(11)
+scales::show_col(Tirol)
+
+Kazan <- colorRampPalette(c("#007A87", "white"))(11)
+scales::show_col(Kazan)
+
+Hof <- colorRampPalette(c("#484848", "white"))(11)
+scales::show_col(Hof)
+
+Foggy <- colorRampPalette(c("#767676", "white"))(11)
+scales::show_col(Foggy)
+
+
+
+
+### Import database & cleaning
+
+library (readr)
+
+amsterdam_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/amsterdam_weekdays.csv")
+amsterdam_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/amsterdam_weekends.csv")
+amsterdam_weekdays$city <- "Amsterdam"
+amsterdam_weekends$city <- "Amsterdam"
+amsterdam_weekdays$weekends = 0 
+amsterdam_weekends$weekends = 1
+
+athens_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/athens_weekdays.csv")
+athens_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/athens_weekends.csv")
+athens_weekdays$city <- "Athens"
+athens_weekends$city <- "Athens"
+athens_weekdays$weekends = 0 
+athens_weekends$weekends = 1
+
+barcelona_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/barcelona_weekdays.csv")
+barcelona_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/barcelona_weekends.csv")
+barcelona_weekdays$city <- "Barcelona"
+barcelona_weekends$city <- "Barcelona"
+barcelona_weekdays$weekends = 0 
+barcelona_weekends$weekends = 1
+
+berlin_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/berlin_weekdays.csv")
+berlin_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/berlin_weekends.csv")
+berlin_weekdays$city <- "Berlin"
+berlin_weekends$city <- "Berlin"
+berlin_weekdays$weekends = 0 
+berlin_weekends$weekends = 1
+
+budapest_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/budapest_weekdays.csv")
+budapest_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/budapest_weekends.csv")
+budapest_weekdays$city <- "Budapest"
+budapest_weekends$city <- "Budapest"
+budapest_weekdays$weekends = 0 
+budapest_weekends$weekends = 1
+
+lisbon_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/lisbon_weekdays.csv")
+lisbon_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/lisbon_weekends.csv")
+lisbon_weekdays$city <- "Lisbon"
+lisbon_weekends$city <- "Lisbon"
+lisbon_weekdays$weekends = 0 
+lisbon_weekends$weekends = 1
+
+london_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/london_weekdays.csv")
+london_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/london_weekends.csv")
+london_weekdays$city <- "London"
+london_weekends$city <- "London"
+london_weekdays$weekends = 0 
+london_weekends$weekends = 1
+
+paris_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/paris_weekdays.csv")
+paris_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/paris_weekends.csv")
+paris_weekdays$city <- "Paris"
+paris_weekends$city <- "Paris"
+paris_weekdays$weekends = 0 
+paris_weekends$weekends = 1
+
+rome_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/rome_weekdays.csv")
+rome_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/rome_weekends.csv")
+rome_weekdays$city <- "Rome"
+rome_weekends$city <- "Rome"
+rome_weekdays$weekends = 0 
+rome_weekends$weekends = 1
+
+vienna_weekdays <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/vienna_weekdays.csv")
+vienna_weekends <- read_csv("/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/vienna_weekends.csv")
+vienna_weekdays$city <- "Vienna"
+vienna_weekends$city <- "Vienna"
+vienna_weekdays$weekends = 0 
+vienna_weekends$weekends = 1
+
+library(dplyr)
+AirBNB_data <- bind_rows(amsterdam_weekdays, 
+                         amsterdam_weekends, 
+                         athens_weekdays, 
+                         athens_weekends, 
+                         barcelona_weekdays, 
+                         barcelona_weekends, 
+                         berlin_weekdays, 
+                         berlin_weekends, 
+                         budapest_weekdays, 
+                         budapest_weekends, 
+                         lisbon_weekdays, 
+                         lisbon_weekends, 
+                         london_weekdays, 
+                         london_weekends, 
+                         paris_weekdays, 
+                         paris_weekends, 
+                         rome_weekdays, 
+                         rome_weekends, 
+                         vienna_weekdays, 
+                         vienna_weekends)
+
+
+
+
+### EXPLORATORY ANALYSIS
+
+install.packages("ggthemes")
+library(ggthemes)
+library(ggplot2)
+
+# Graph theme  
+theme_AirBNB <- function() {
+  theme_test() +
+    theme(axis.line = element_line(color = "black",
+                                   linewidth = 0.3), 
+          axis.line.y.right = element_line(color = "black", 
+                                           linewidth = 0.3),
+          axis.line.x.top = element_line(color = "black", 
+                                         linewidth = 0.3),
+          panel.grid.major.y = element_line(color = "#F1F1F2", 
+                                            linewidth = 0.3, 
+                                            linetype = "longdash"), 
+          axis.title.x = element_text(size = 13, 
+                                      vjust = 0, 
+                                      family = "LMRoman", face = "italic"), 
+          axis.title.y = element_text(size = 13, 
+                                      vjust = 0, 
+                                      family = "LMRoman", face = "italic"),
+          axis.text.x = element_text(size = 12, 
+                                     vjust = 0.1, 
+                                     family = "LMRoman"), 
+          axis.text.y = element_text(size = 12, 
+                                     vjust = 0.1, 
+                                     family = "LMRoman"), 
+          legend.text = element_text(family = "LMRoman"),
+          legend.title = element_text(family = "LMRoman"),
+          axis.ticks = element_blank(), 
+          plot.title = element_text(size = 14, 
+                                    face = "bold", 
+                                    family = "LMRoman", 
+                                    hjust = 0.5),
+          plot.subtitle = element_text(family = "LMRoman", 
+                                       size = 10),
+          plot.margin = margin(1, 1, 1, 1, "cm"))
+}
+
+showtext_begin()
+
+
+
+
+
+# Distribution of Airbnb Prices by Number of Bedrooms and Room Type
+AirBNB_data$bedrooms <- as.factor(AirBNB_data$bedrooms)
+ggplot(subset(AirBNB_data, room_type != "Shared room"), aes(x = bedrooms, 
+                                                            y = realSum, 
+                                                            color = room_type, 
+                                                            fill = room_type)) +
+  geom_boxplot(position = position_dodge(width = 0.6), 
+               width = 0.5, 
+               size = 0.4, 
+               outlier.size = 1, 
+               outlier.shape = 1, 
+               outlier.alpha = 0.3
+               ) +
+  scale_y_log10() +
+  scale_color_manual(values = c("Entire home/apt" = Rausch[1], 
+                                "Private room" = Babu[1]), 
+                     labels = c("Entire home/apt" = "Entire Place", 
+                                "Private room" = "Private Room")
+                     )+
+  scale_fill_manual(values = c("Entire home/apt" = Rausch[5], 
+                               "Private room" = Babu[5]), 
+                    labels = c("Entire home/apt" = "Entire Place", 
+                               "Private room" = "Private Room")
+                    )+
+  labs(title = "Distribution of Airbnb Prices by Number of Bedrooms and Room Type", 
+       x = "Number of Bedrooms", 
+       y = "Rent Price", 
+       color = "Room Type", 
+       fill = "Room Type") + 
+  theme_AirBNB()
+ggsave("plot_LMRoman.pdf", width = 10, height = 7)
+
+# Test : Cloud & regressions
+#ggplot(AirBNB_data ,aes(x = metro_dist, y = log(realSum))) + 
+  #geom_point(color = Rausch[4], shape = 1, alpha = 0.1, size = 1) + 
+  #geom_smooth(color = Babu[1], method = "lm", se = FALSE, linewidth = 0.5) + 
+  #geom_smooth(color = Arches[1], method = "lm", se = FALSE, formula = y ~ log(x), linewidth = 0.5) + 
+  #theme_AirBNB() + 
+  #theme(panel.grid.major.x = element_line(color = "#F1F1F2", linewidth = 0.5, linetype = "longdash"))
+
+
+# Distribution of Airbnb Prices by Person Capacity and Room Type
+AirBNB_data$person_capacity <- as.factor(AirBNB_data$person_capacity)
+ggplot(AirBNB_data, aes(x = person_capacity, 
+                        y = realSum, 
+                        color = room_type, 
+                        fill = room_type)) +
+  geom_violin(position = position_dodge(width = 0.6),
+              width = 1.5,
+              size = 0.4, 
+              alpha = 0.4,
+              color = "white"
+              ) +
+  geom_boxplot(position = position_dodge(width = 0.6), 
+               width = 0.2,
+               size = 0.4, 
+               outlier.size = 1, 
+               outlier.shape = 1, 
+               outlier.alpha = 0.3
+               ) +
+  scale_color_manual(values = c("Entire home/apt" = Rausch[1], 
+                                "Private room" = Babu[1], 
+                                "Shared room" = Arches[1]), 
+                     labels = c("Entire home/apt" = "Entire Place", 
+                                "Private room" = "Private Room", 
+                                "Shared room" = "Shared Room")) +
+  scale_fill_manual(values = c("Entire home/apt" = Rausch[5], 
+                               "Private room" = Babu[5], 
+                               "Shared room" = Arches[5]), 
+                    labels = c("Entire home/apt" = "Entire Place", 
+                               "Private room" = "Private Room", 
+                               "Shared room" = "Shared Room")) +
+  labs(title = "Distribution of Airbnb Prices by Person Capacity and Room Type (log10 scale)",
+       x = "Person Capacity", 
+       y = "Rent Price", 
+       color = "Room Type", 
+       fill = "Room Type") + 
+  scale_y_log10() +
+  coord_cartesian(ylim = c(min = 50, 
+                           max = 5000)) + 
+  theme_AirBNB() 
+
+
+
+#  
+
+
+
+
+
+
+
+
+
+
+
+# PCA Distance: Testing which of distance from center and distance from metro is the most important. [Multicolinearity]
+distance_pca <- AirBNB_data[, c("dist", "metro_dist")] # Isolate series
+str(distance_pca) # Verif
+res_pca_dist <- prcomp(distance_pca, scale. = TRUE) # PCA calculus (avec centrage/reduction)
+summary(res_pca_dist) # Components properties  
+res_pca_dist$rotation # Components loadings
+distance_pca <- as.data.frame(res_pca_dist$x) # Create PCA database
+
+distance_pca <- distance_pca %>%
+  rename(
+    PCA_Overall_distance = PC1, 
+    PCA_dist_CenterVSMetro = PC2
+  )
+
+
+
+
+
+
+### FINAL MODEL
+
+library(sandwich)
+library(lmtest)
+
+AirBNB_data$bedrooms <- as.numeric(as.character(AirBNB_data$bedrooms))
+AirBNB_data$person_capacity <- as.numeric(as.character(AirBNB_data$person_capacity))
+AirBNB_data$cleanliness_rating <- as.numeric(as.character(AirBNB_data$cleanliness_rating))
+
+model3 <- lm(log(realSum) ~ 
+               PCA_Overall_distance + 
+               PCA_dist_CenterVSMetro + 
+               bedrooms + 
+               person_capacity + 
+               room_type + 
+               person_capacity*room_type + 
+               bedrooms*room_type + 
+               biz + 
+               PCA_dist_CenterVSMetro*biz + 
+               cleanliness_rating + 
+               guest_satisfaction_overall + 
+               weekends +
+               multi + 
+               city, 
+             data = cbind(AirBNB_data, distance_pca))
+summary(model3)
+
+install.packages("modelsummary")
+install.packages("pandoc")
+library(modelsummary)
+modelsummary(model3, 
+             output = "model_results.docx", 
+             stars = TRUE, 
+             title = "Linear Regression Results: Log(Price) as Dependent Variable", 
+             statistic = "std.error")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Fonctions utiles : 
+AirBNB_data$pred <- predict(model1)
+bptest(model1)
+coeftest(model1, vcov = vcovHC(model1, type = "HC1"))
+
+
+# Models comparison
+AIC(model1)
+BIC(model1)
+
+
+
+
+write.csv(AirBNB_data, row.names = FALSE)
+
+
+
+
