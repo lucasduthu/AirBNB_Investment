@@ -1,24 +1,3 @@
-### CODE BOOK 
-
-#Name                           type                          meaning
-
-#realSum                        NumÃ©rique                    Le prix total de lâ€™annonce (ce que lâ€™utilisateur paie).
-#room_type                      CatÃ©gorielle                 Le type de chambre proposÃ© : par exemple entiÃ¨re, privÃ©e, partagÃ©e.
-#room_shared                    BoolÃ©en (TRUE/FALSE)         Est-ce que la chambre est partagÃ©e avec dâ€™autres personnes ? (TRUE = oui, FALSE = non).
-#room_private                   BoolÃ©en (TRUE/FALSE)         Est-ce que la chambre est privative (rÃ©servÃ©e uniquement Ã  toi) ? (TRUE = oui, FALSE = non).
-#person_capacity                NumÃ©rique                    Nombre maximum de personnes pouvant Ãªtre hÃ©bergÃ©es dans le logement.
-#host_is_superhost              BoolÃ©en (TRUE/FALSE)         Est-ce que lâ€™hÃ´te est un superhost (trÃ¨s bien notÃ© par Airbnb) ?
-#multi                          BoolÃ©en (TRUE/FALSE)         Est-ce que lâ€™annonce propose plusieurs chambres en mÃªme temps ?
-#biz                            BoolÃ©en (TRUE/FALSE)         Est-ce que lâ€™annonce est destinÃ©e Ã  un usage professionnel (par ex. voyage dâ€™affaires) ?
-#cleanliness_rating             NumÃ©rique                    Note de propretÃ© du logement (gÃ©nÃ©ralement sur 10).
-#guest_satisfaction_overall     NumÃ©rique                    Note globale donnÃ©e par les invitÃ©s aprÃ¨s leur sÃ©jour.
-#bedrooms                       NumÃ©rique                    Nombre de chambres dans lâ€™annonce.
-#dist                           NumÃ©rique                    Distance au centre-ville (en kilomÃ¨tres ou autre unitÃ©).
-#metro_dist                     NumÃ©rique                    Distance Ã  la station de mÃ©tro la plus proche.
-#lng                            NumÃ©rique                    Longitude de lâ€™emplacement du logement (coordonnÃ©e gÃ©ographique Est-Ouest).
-#lat                            NumÃ©rique                    Latitude de lâ€™emplacement du logement (coordonnÃ©e gÃ©ographique Nord-Sud).
-
-
 
 install.packages("showtext")
 library(showtext)
@@ -322,12 +301,31 @@ distance_pca <- distance_pca %>%
   )
 
 
+# MULTICOL. TEST
+install.packages("car")
+library(car)
 
+Coltest <- lm(log(realSum) ~ 
+                PCA_Overall_distance + 
+                PCA_dist_CenterVSMetro + 
+                bedrooms + 
+                person_capacity + 
+                room_type + 
+                biz + 
+                cleanliness_rating + 
+                guest_satisfaction_overall + 
+                weekends +
+                multi + 
+                city, 
+              data = cbind(AirBNB_data, distance_pca))
+vif(Coltest)
+# note : no multicol.
 
 
 
 ### FINAL MODEL
 
+# Performing
 library(sandwich)
 library(lmtest)
 
@@ -353,6 +351,7 @@ model3 <- lm(log(realSum) ~
              data = cbind(AirBNB_data, distance_pca))
 summary(model3)
 
+# Word export
 install.packages("modelsummary")
 install.packages("pandoc")
 library(modelsummary)
@@ -363,6 +362,93 @@ modelsummary(model3,
              statistic = "std.error")
 
 
+### HETEROSCÉDASTICITY
+
+# Perform 
+AirBNB_data$pred <- predict(model3)
+bptest(model3)
+model3_robust <- coeftest(model3, vcov = vcovHC(model1, type = "HC1"))
+print(model3_robust)
+
+# Export
+modelsummary(model3_robust, 
+             output = "model_robust_results.docx", 
+             stars = TRUE, 
+             title = "Robust SE Linear Regression Results: Log(Price) as Dependent Variable", 
+             statistic = "std.error")
+
+
+
+
+### LASSO REGRESSION (ALPHA = 1)
+
+# Performing
+install.packages("glmnet")
+library(glmnet)
+
+X <- model.matrix(model3)[, -1]  
+y <- log(AirBNB_data$realSum)
+
+lasso_model <- glmnet(X, y, alpha = 1)
+
+cv_lasso <- cv.glmnet(X, y, alpha = 1)
+best_lambda <- cv_lasso$lambda.min
+coef_lasso <- coef(cv_lasso, s = "lambda.min")
+print(coef_lasso)
+
+# Word export
+coef_df <- as.data.frame(as.matrix(coef_lasso))
+coef_df$Variable <- rownames(coef_df)
+colnames(coef_df)[1] <- "Estimate"
+coef_df <- coef_df[, c("Variable", "Estimate")]
+
+install.packages(c("glmnet", "broom", "flextable", "officer"))
+library(glmnet)
+library(broom)
+library(flextable)
+library(officer)
+
+ft <- flextable(coef_df)
+doc <- read_docx() %>%
+  body_add_par("Lasso Regression Coefficients", style = "heading 1") %>%
+  body_add_flextable(ft)
+
+print(doc, target = "/Users/lucasduthu-paloumet/Desktop/lasso_results.docx", replace)
+
+
+### REGRESSION TREE 
+
+install.packages("rpart")
+install.packages("rpart.plot")
+library(rpart)
+library(rpart.plot)
+
+# Perform
+tree_var <- lm(log(realSum) ~ 
+               dist + 
+               metro_dist + 
+               bedrooms + 
+               person_capacity + 
+               room_type + 
+               biz + 
+               cleanliness_rating + 
+               guest_satisfaction_overall + 
+               weekends +
+               multi + city, data = AirBNB_data)
+
+tree_model <- rpart(tree_var, 
+                    method = "anova")
+
+rpart.plot(tree_model, 
+           type = 5, 
+           extra = 101, 
+           fallen.leaves = TRUE)
+
+plotcp(tree_model) # note : max cp = 
+
+
+
+#, control = rpart.control(cp = 0.007, minbucket = 2, maxdepth = 10 )
 
 
 
@@ -372,32 +458,7 @@ modelsummary(model3,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Fonctions utiles : 
-AirBNB_data$pred <- predict(model1)
-bptest(model1)
-coeftest(model1, vcov = vcovHC(model1, type = "HC1"))
-
-
-# Models comparison
-AIC(model1)
-BIC(model1)
-
-
-
+### FONCTIONS UTILES ? 
 
 write.csv(AirBNB_data, row.names = FALSE)
 
