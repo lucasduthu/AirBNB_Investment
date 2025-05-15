@@ -1,0 +1,395 @@
+    # PACKAGES 
+pip install numpy
+import numpy as np
+import pandas as pd
+import matplotlib as plt
+import seaborn as sns
+from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.font_manager as fm
+from types import FunctionType
+import matplotlib.pyplot as plt
+
+    # PALETTES
+BNB_pink = sns.color_palette(LinearSegmentedColormap.from_list("BNB_pink", ["#FF5A5F", "white"])([i/9 for i in range(10)]))
+BNB_cyan = sns.color_palette(LinearSegmentedColormap.from_list("BNB_cyan", ["#00D1C1", "white"])([i/9 for i in range(10)]))
+BNB_orange = sns.color_palette(LinearSegmentedColormap.from_list("BNB_orange", ["#FC642D", "white"])([i/9 for i in range(10)]))
+BNB_green = sns.color_palette(LinearSegmentedColormap.from_list("BNB_green", ["#8CE071", "white"])([i/9 for i in range(10)]))
+BNB_purple = sns.color_palette(LinearSegmentedColormap.from_list("BNB_purple", ["#7B0051", "white"])([i/9 for i in range(10)]))
+BNB_yellow = sns.color_palette(LinearSegmentedColormap.from_list("BNB_yellow", ["#FFB400", "white"])([i/9 for i in range(10)]))
+BNB_brown = sns.color_palette(LinearSegmentedColormap.from_list("BNB_brown", ["#B4A76C", "white"])([i/9 for i in range(10)]))
+BNB_blue = sns.color_palette(LinearSegmentedColormap.from_list("BNB_blue", ["#007A87", "white"])([i/9 for i in range(10)]))
+BNB_dgray = sns.color_palette(LinearSegmentedColormap.from_list("BNB_dgray", ["#484848", "white"])([i/9 for i in range(10)]))
+BNB_lgray = sns.color_palette(LinearSegmentedColormap.from_list("BNB_lgray", ["#767676", "white"])([i/9 for i in range(10)]))
+
+    # PLOT PALETTES 
+      # rectangles
+def show_palette(palette, title="Palette"):
+    n = len(palette)
+    fig, ax = plt.subplots(figsize=(n, 1))
+    for i, color in enumerate(palette):
+        ax.add_patch(plt.Rectangle((i, 0), 1, 1, color=color))
+    ax.set_xlim(0, n)
+    ax.set_ylim(0, 1)
+    ax.axis('off')
+    plt.title(title, fontsize=12, loc='center')
+    plt.show()
+
+show_palette(BNB_pink, title="AirBNB Pink")    
+show_palette(BNB_cyan, title="AirBNB Cyan")
+show_palette(BNB_orange, title="AirBNB Orange")
+show_palette(BNB_green, title="AirBNB Green")
+show_palette(BNB_purple, title="AirBNB Purple")
+show_palette(BNB_yellow, title="AirBNB Yellow")
+show_palette(BNB_brown, title="AirBNB Brown")
+show_palette(BNB_blue, title="AirBNB Blue")
+show_palette(BNB_dgray, title="AirBNB Dark Gray")
+show_palette(BNB_lgray, title="AirBNB Light Gray")
+
+      # color wheel
+def show_color_wheel(palette, title="Color Wheel"):
+    n = len(palette)
+    theta = np.linspace(0, 2 * np.pi, n + 1)
+    radii = [1] * n
+
+    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, figsize=(6, 6))
+    bars = ax.bar(theta[:-1], radii, width=2 * np.pi / n, bottom=0.0, color=palette, edgecolor='white', linewidth=1)
+    ax.set_axis_off()
+    plt.title(title, y=1.05)
+    plt.show()
+
+show_color_wheel(BNB_pink, title="AirBNB Pink") 
+show_color_wheel(BNB_cyan, title="AirBNB Cyan")
+show_color_wheel(BNB_orange, title="AirBNB Orange")
+show_color_wheel(BNB_green, title="AirBNB Green")
+show_color_wheel(BNB_purple, title="AirBNB Purple")
+show_color_wheel(BNB_yellow, title="AirBNB Yellow")
+show_color_wheel(BNB_brown, title="AirBNB Brown")
+show_color_wheel(BNB_blue, title="AirBNB Blue")
+show_color_wheel(BNB_dgray, title="AirBNB Dark Gray")
+show_color_wheel(BNB_lgray, title="AirBNB Light Gray")
+
+
+    # OPEN CSV
+amsterdam_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/amsterdam_weekdays.csv')
+amsterdam_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/amsterdam_weekends.csv')
+athens_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/athens_weekdays.csv')
+athens_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/athens_weekends.csv')
+barcelona_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/barcelona_weekdays.csv')
+barcelona_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/barcelona_weekends.csv')
+berlin_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/berlin_weekdays.csv')
+berlin_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/berlin_weekends.csv')
+budapest_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/budapest_weekdays.csv')
+budapest_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/budapest_weekends.csv')
+lisbon_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/lisbon_weekdays.csv')
+lisbon_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/lisbon_weekends.csv')
+london_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/london_weekdays.csv')
+london_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/london_weekends.csv')
+paris_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/paris_weekdays.csv')
+paris_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/paris_weekends.csv')
+rome_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/rome_weekdays.csv')
+rome_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/rome_weekends.csv')
+vienna_weekdays = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/vienna_weekdays.csv')
+vienna_weekends = pd.read_csv('/Users/lucasduthu-paloumet/Desktop/AirBNBprice_data/vienna_weekends.csv')
+
+    # CREATE VAR CITY
+amsterdam_weekdays["city"] = "Amsterdam"
+amsterdam_weekends["city"] = "Amsterdam"
+athens_weekdays["city"] = "Athens"
+athens_weekends["city"] = "Athens"
+barcelona_weekdays["city"] = "Barcelona"
+barcelona_weekends["city"] = "Barcelona"
+berlin_weekdays["city"] = "Berlin"
+berlin_weekends["city"] = "Berlin"
+budapest_weekdays["city"] = "Budapest"
+budapest_weekends["city"] = "Budapest"
+lisbon_weekdays["city"] = "Lisbon"
+lisbon_weekends["city"] = "Lisbon"
+london_weekdays["city"] = "London"
+london_weekends["city"] = "London"
+paris_weekdays["city"] = "Paris"
+paris_weekends["city"] = "Paris"
+rome_weekdays["city"] = "Rome"
+rome_weekends["city"] = "Rome"
+vienna_weekdays["city"] = "Vienna"
+vienna_weekends["city"] = "Vienna"
+
+# CREATE VAR WEEKENDS
+amsterdam_weekdays["weekends"] = 0
+amsterdam_weekends["weekends"] = 1
+athens_weekdays["weekends"] = 0
+athens_weekends["weekends"] = 1
+barcelona_weekdays["weekends"] = 0
+barcelona_weekends["weekends"] = 1
+berlin_weekdays["weekends"] = 0
+berlin_weekends["weekends"] = 1
+budapest_weekdays["weekends"] = 0
+budapest_weekends["weekends"] = 1
+lisbon_weekdays["weekends"] = 0
+lisbon_weekends["weekends"] = 1
+london_weekdays["weekends"] = 0
+london_weekends["weekends"] = 1
+paris_weekdays["weekends"] = 0
+paris_weekends["weekends"] = 1
+rome_weekdays["weekends"] = 0
+rome_weekends["weekends"] = 1
+vienna_weekdays["weekends"] = 0
+vienna_weekends["weekends"] = 1
+
+    # MERGERS DATABASES (FROM ROW)
+AirBNB_data = pd.concat([amsterdam_weekdays,
+                      amsterdam_weekends,
+                      athens_weekdays,
+                      athens_weekends,
+                      barcelona_weekdays,
+                      barcelona_weekends,
+                      berlin_weekdays,
+                      berlin_weekends,
+                      
+                      budapest_weekdays,
+                      budapest_weekends,
+                      
+                      lisbon_weekdays,
+                      lisbon_weekends,
+                      london_weekdays,
+                      london_weekends,
+                      paris_weekdays,
+                      paris_weekends,
+                      
+                      
+                      
+                      rome_weekdays,
+                      rome_weekends,
+                      vienna_weekdays,
+                      vienna_weekends
+                      ], ignore_index=True)
+
+    # SUMMARIZE DATA BASE
+AirBNB_data.describe()
+
+    # CREATE ln(realSum)
+AirBNB_data["ln_realSum"] = np.log(AirBNB_data["realSum"])
+
+    # ADD FONTS
+font_path_Regular = '/Users/lucasduthu-paloumet/Downloads/Latin-Modern-Roman/lmroman10-regular.otf'
+font_path_Italic = '/Users/lucasduthu-paloumet/Downloads/Latin-Modern-Roman/lmroman10-italic.otf'
+font_path_Bold = '/Users/lucasduthu-paloumet/Downloads/Latin-Modern-Roman/lmroman10-bold.otf'
+font_path_BoldItalic = '/Users/lucasduthu-paloumet/Downloads/Latin-Modern-Roman/lmroman10-bolditalic.otf'
+
+fontprop_Regular = fm.FontProperties(fname=font_path_Regular)
+fontprop_Italic = fm.FontProperties(fname=font_path_Italic)
+fontprop_Bold = fm.FontProperties(fname=font_path_Bold)
+fontprop_BoldItalic = fm.FontProperties(fname=font_path_BoldItalic)
+
+    # CREATE LABELS FOR WEEKENDS
+AirBNB_data['weekend_label'] = AirBNB_data['weekends'].map({0: "Week-days", 1: "Week-ends"})
+
+    # SET PALETTE 
+palette1= {"Week-days": BNB_pink[2],
+           "Week-ends": BNB_pink[5]
+           }
+
+plt.figure()
+sns.boxplot(data=AirBNB_data, 
+            x='city',
+            y='realSum',
+            hue='weekend_label',
+            width= 0.6,
+            gap=0.2,
+            palette=palette1,
+            boxprops=dict(edgecolor=BNB_pink[1]),
+            whiskerprops=dict(color=BNB_pink[1]),
+            capprops=dict(color=BNB_pink[1]),
+            medianprops=dict(color=BNB_pink[1]),
+            flierprops=dict(markeredgecolor=BNB_pink[1], markersize= 0.8, alpha=0.3)
+            )
+plt.yscale("log")
+plt.title("Distribution of Airbnb Prices by city",
+          fontproperties=fontprop_Regular,
+          fontsize = 12
+          )
+plt.ylabel("realSum (log scale)",
+           fontsize=9,
+           fontproperties=fontprop_Italic
+           )
+plt.xlabel("")
+plt.xticks(rotation=45,
+           fontsize=9,
+           fontproperties=fontprop_Regular
+           )
+plt.yticks(fontsize=9,
+           fontproperties=fontprop_Regular
+           )
+plt.legend(
+    title="",
+    prop=fontprop_Italic
+    )
+plt.tight_layout()
+
+plt.show()
+
+
+
+
+
+palette1= {"Week-days": BNB_pink[1],
+           "Week-ends": BNB_cyan[1]
+           }
+
+plt.figure(dpi=300)
+sns.boxplot(data=AirBNB_data, 
+            x='bedrooms',
+            y='realSum',
+            hue='weekend_label',
+            width= 0.6,
+            gap=0.2,
+            palette=palette1,
+            boxprops=dict(edgecolor=BNB_dgray[1]),
+            whiskerprops=dict(color=BNB_dgray[1]),
+            capprops=dict(color=BNB_dgray[1]),
+            medianprops=dict(color=BNB_dgray[1]),
+            flierprops=dict(markeredgecolor=BNB_dgray[1], markersize= 0.8, alpha=0.3, markerfacecolor="none")
+            )
+plt.yscale("log")
+plt.title("Distribution of Airbnb Prices by city",
+          fontproperties=fontprop_Regular,
+          fontsize = 12
+          )
+plt.ylabel("realSum (log scale)",
+           fontsize=9,
+           fontproperties=fontprop_Italic
+           )
+plt.xlabel("")
+plt.xticks(rotation=0,
+           fontsize=9,
+           fontproperties=fontprop_Regular
+           )
+plt.yticks(fontsize=9,
+           fontproperties=fontprop_Regular
+           )
+plt.legend(
+    title="",
+    prop=fontprop_Italic
+    )
+plt.tight_layout()
+
+plt.show()
+
+
+# 3D GRAPH
+
+
+
+
+import plotly.express as px
+import pandas as pd
+import plotly.graph_objects as go
+fig = px.scatter_3d(AirBNB_data, x='bedrooms', y='person_capacity', z='realSum',
+                    opacity=0.6, color='room_type')
+fig.update_layout(scene=dict(zaxis=dict(range=[0, 800]), xaxis=dict(range=[0,5])))
+
+# Régression : chomage ~ revenu + criminalite
+X = AirBNB_data[['bedrooms', 'person_capacity']]
+y = AirBNB_data['realSum']
+model = LinearRegression().fit(X, y)
+
+# Créer une grille (meshgrid)
+x_range = np.linspace(X['bedrooms'].min(), X['person_capacity'].max(), 30)
+y_range = np.linspace(X['bedrooms'].min(), X['person_capacity'].max(), 30)
+x_grid, y_grid = np.meshgrid(x_range, y_range)
+xy_flat = np.column_stack([x_grid.ravel(), y_grid.ravel()])
+
+# Prédire les valeurs de z (chomage) sur la grille
+z_pred = model.predict(xy_flat).reshape(x_grid.shape)
+
+# Ajouter le plan de régression
+fig.add_trace(go.Surface(
+    x=x_grid,
+    y=y_grid,
+    z=z_pred,
+    colorscale='YlOrRd',
+    opacity=0.5,
+    name='Plan de régression',
+    showscale=False
+))
+
+fig.show()
+
+
+
+
+
+
+
+
+
+
+
+# Test Poly graph3d
+
+df = AirBNB_data
+
+Var1 = "bedrooms"
+Var2 = "person_capacity"
+Var3 = "realSum"
+Var1_label = "Bedrooms"
+Var2_label = "Person Capacity"
+Var3_label = "Rent Price"
+
+# Variables
+X = df[[Var1, Var2]]
+y = df[Var3]
+
+# Transformation avec interaction seulement
+poly = PolynomialFeatures(degree=2, include_bias=False, interaction_only=True)
+X_interact = poly.fit_transform(X)
+
+# Modèle de régression
+model = LinearRegression().fit(X_interact, y)
+
+# Grille
+x_range = np.linspace(X[Var1].min(), X[Var2].max(), 30)
+y_range = np.linspace(X[Var1].min(), X[Var2].max(), 30)
+x_grid, y_grid = np.meshgrid(x_range, y_range)
+xy_grid = np.column_stack([x_grid.ravel(), y_grid.ravel()])
+xy_interact = poly.transform(xy_grid)
+z_pred = model.predict(xy_interact).reshape(x_grid.shape)
+
+# Visualisation
+fig = go.Figure()
+
+# Nuage de points
+fig.add_trace(go.Scatter3d(
+    x=X[Var1],
+    y=X[Var2],
+    z=y,
+    mode='markers',
+    marker=dict(size=4, color='#1A85FF', opacity=0.1),
+    name='Données'
+))
+
+# Plan de régression avec interaction
+fig.add_trace(go.Surface(
+    x=x_grid,
+    y=y_grid,
+    z=z_pred,
+    colorscale='YlOrRd',
+    opacity=0.5,
+    name='Interaction plan',
+    showscale=False
+))
+
+# Mise en forme
+fig.update_layout(
+    scene=dict(
+        xaxis_title= Var1_label,
+        yaxis_title= Var2_label,
+        zaxis_title= Var3_label,
+        zaxis=dict(range=[0, 800]),
+        xaxis=dict(range=[0, 6]),
+        yaxis=dict(range=[1, 6])
+    ),
+    title='3D REGRRESSION W/ INTERACTIONS',
+    margin=dict(l=0, r=0, b=0, t=50)
+)
+
+fig.show()
